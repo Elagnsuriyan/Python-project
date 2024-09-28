@@ -1,0 +1,61 @@
+import random
+import tkinter as tk
+from tkinter import messagebox
+
+class NumberGuessingGame:
+    def __init__(self, root):
+        self.root = root
+        self.root.title("Number Guessing Game")
+        
+        # Initialize game settings
+        self.lower_limit = 1
+        self.upper_limit = 100
+        self.max_attempts = 7
+        self.attempts = 0
+        self.random_number = random.randint(self.lower_limit, self.upper_limit)
+        
+        # Setup GUI components
+        self.label = tk.Label(root, text=f"Guess a number between {self.lower_limit} and {self.upper_limit}:")
+        self.label.pack()
+        
+        self.entry = tk.Entry(root)
+        self.entry.pack()
+        
+        self.submit_button = tk.Button(root, text="Submit", command=self.check_guess)
+        self.submit_button.pack()
+        
+        self.attempts_label = tk.Label(root, text=f"Attempts remaining: {self.max_attempts}")
+        self.attempts_label.pack()
+    
+    def check_guess(self):
+        try:
+            guess = int(self.entry.get())
+            if guess < self.lower_limit or guess > self.upper_limit:
+                messagebox.showwarning("Invalid Input", f"Please enter a number between {self.lower_limit} and {self.upper_limit}.")
+                return
+            
+            self.attempts += 1
+            attempts_left = self.max_attempts - self.attempts
+            
+            if guess == self.random_number:
+                messagebox.showinfo("Success", f"Congratulations! You guessed the number {self.random_number} correctly!")
+                self.root.destroy()  # End game
+            elif guess < self.random_number:
+                messagebox.showinfo("Hint", "Your guess is too low.")
+            else:
+                messagebox.showinfo("Hint", "Your guess is too high.")
+            
+            self.attempts_label.config(text=f"Attempts remaining: {attempts_left}")
+            
+            if self.attempts == self.max_attempts and guess != self.random_number:
+                messagebox.showinfo("Game Over", f"Sorry, you've used all attempts. The correct number was {self.random_number}.")
+                self.root.destroy()  # End game
+        
+        except ValueError:
+            messagebox.showerror("Invalid Input", "Please enter a valid number.")
+
+# Run the Tkinter-based game
+if __name__ == "__main__":
+    root = tk.Tk()
+    game = NumberGuessingGame(root)
+    root.mainloop()
