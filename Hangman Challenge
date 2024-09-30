@@ -1,0 +1,65 @@
+import random
+
+# Predefined list of words
+word_list = ["python", "hangman", "challenge", "programming", "computer"]
+
+class Hangman:
+    def __init__(self):
+        self.word = random.choice(word_list)
+        self.word_display = ["_"] * len(self.word)
+        self.incorrect_guesses = 0
+        self.max_incorrect_guesses = 6
+        self.guessed_letters = []
+
+    def display_state(self):
+        print("\nCurrent word: " + " ".join(self.word_display))
+        print(f"Incorrect guesses: {self.incorrect_guesses}/{self.max_incorrect_guesses}")
+        print("Guessed letters: " + ", ".join(self.guessed_letters))
+
+    def guess_letter(self, letter):
+        if letter in self.guessed_letters:
+            print(f"You already guessed '{letter}'. Try again.")
+            return
+
+        self.guessed_letters.append(letter)
+
+        if letter in self.word:
+            for idx, char in enumerate(self.word):
+                if char == letter:
+                    self.word_display[idx] = letter
+            print(f"Good guess! '{letter}' is in the word.")
+        else:
+            self.incorrect_guesses += 1
+            print(f"'{letter}' is not in the word. You lost one guess.")
+
+    def check_win(self):
+        return "_" not in self.word_display
+
+    def check_loss(self):
+        return self.incorrect_guesses >= self.max_incorrect_guesses
+
+def main():
+    game = Hangman()
+
+    print("Welcome to Hangman Challenge!")
+
+    while True:
+        game.display_state()
+        guess = input("Guess a letter: ").lower()
+
+        if len(guess) != 1 or not guess.isalpha():
+            print("Please enter a valid letter.")
+            continue
+
+        game.guess_letter(guess)
+
+        if game.check_win():
+            print(f"\nCongratulations! You guessed the word: {''.join(game.word_display)}")
+            break
+
+        if game.check_loss():
+            print(f"\nGame Over! You've run out of guesses. The word was: {game.word}")
+            break
+
+if __name__ == "__main__":
+    main()
