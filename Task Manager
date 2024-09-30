@@ -1,0 +1,42 @@
+def main():
+    task_manager = TaskManager()
+    
+    # Load tasks from the file if they exist
+    task_manager.load_from_file()
+
+    while True:
+        print("\nTask Manager")
+        print("1. Add a task")
+        print("2. Edit a task")
+        print("3. Delete a task")
+        print("4. Mark task as complete")
+        print("5. Display tasks")
+        print("6. Save and exit")
+        choice = input("Enter your choice: ")
+
+        if choice == "1":
+            description = input("Enter task description: ")
+            task_manager.add_task(description)
+        elif choice == "2":
+            task_manager.display_tasks()
+            task_id = int(input("Enter the task ID to edit: "))
+            new_description = input("Enter new description: ")
+            task_manager.edit_task(task_id, new_description)
+        elif choice == "3":
+            task_manager.display_tasks()
+            task_id = int(input("Enter the task ID to delete: "))
+            task_manager.delete_task(task_id)
+        elif choice == "4":
+            task_manager.display_tasks()
+            task_id = int(input("Enter the task ID to mark complete: "))
+            task_manager.mark_complete(task_id)
+        elif choice == "5":
+            task_manager.display_tasks()
+        elif choice == "6":
+            task_manager.save_to_file()
+            break
+        else:
+            print("Invalid choice. Please try again.")
+
+if __name__ == "__main__":
+    main()
