@@ -1,0 +1,109 @@
+pip install tk
+
+import tkinter as tk
+from tkinter import messagebox
+
+class TaskManagerApp:
+    def __init__(self, root, task_manager):
+        self.root = root
+        self.task_manager = task_manager
+        self.root.title("Task Manager")
+
+        # Create and place widgets
+        self.task_listbox = tk.Listbox(root, height=10, width=50)
+        self.task_listbox.grid(row=0, column=0, columnspan=4)
+
+        # Task entry box
+        self.task_entry = tk.Entry(root, width=40)
+        self.task_entry.grid(row=1, column=0, columnspan=2, padx=10, pady=10)
+
+        # Buttons
+        add_button = tk.Button(root, text="Add Task", command=self.add_task)
+        add_button.grid(row=1, column=2, padx=10)
+
+        edit_button = tk.Button(root, text="Edit Task", command=self.edit_task)
+        edit_button.grid(row=2, column=0, padx=10, pady=5)
+
+        delete_button = tk.Button(root, text="Delete Task", command=self.delete_task)
+        delete_button.grid(row=2, column=1, padx=10, pady=5)
+
+        complete_button = tk.Button(root, text="Mark Complete", command=self.mark_complete)
+        complete_button.grid(row=2, column=2, padx=10, pady=5)
+
+        save_button = tk.Button(root, text="Save", command=self.save_tasks)
+        save_button.grid(row=3, column=0, padx=10, pady=5)
+
+        load_button = tk.Button(root, text="Load", command=self.load_tasks)
+        load_button.grid(row=3, column=1, padx=10, pady=5)
+
+        quit_button = tk.Button(root, text="Quit", command=root.quit)
+        quit_button.grid(row=3, column=2, padx=10, pady=5)
+
+        # Load existing tasks on startup
+        self.load_tasks()
+
+    def add_task(self):
+        description = self.task_entry.get()
+        if description:
+            self.task_manager.add_task(description)
+            self.update_task_list()
+            self.task_entry.delete(0, tk.END)
+        else:
+            messagebox.showwarning("Input Error", "Please enter a task description.")
+
+    def edit_task(self):
+        selected_task_index = self.get_selected_task_index()
+        if selected_task_index is not None:
+            new_description = self.task_entry.get()
+            if new_description:
+                self.task_manager.edit_task(selected_task_index, new_description)
+                self.update_task_list()
+                self.task_entry.delete(0, tk.END)
+            else:
+                messagebox.showwarning("Input Error", "Please enter a new task description.")
+        else:
+            messagebox.showwarning("Selection Error", "Please select a task to edit.")
+
+    def delete_task(self):
+        selected_task_index = self.get_selected_task_index()
+        if selected_task_index is not None:
+            self.task_manager.delete_task(selected_task_index)
+            self.update_task_list()
+        else:
+            messagebox.showwarning("Selection Error", "Please select a task to delete.")
+
+    def mark_complete(self):
+        selected_task_index = self.get_selected_task_index()
+        if selected_task_index is not None:
+            self.task_manager.mark_complete(selected_task_index)
+            self.update_task_list()
+        else:
+            messagebox.showwarning("Selection Error", "Please select a task to mark as complete.")
+
+    def save_tasks(self):
+        self.task_manager.save_to_file()
+        messagebox.showinfo("Success", "Tasks saved successfully.")
+
+    def load_tasks(self):
+        self.task_manager.load_from_file()
+        self.update_task_list()
+
+    def update_task_list(self):
+        self.task_listbox.delete(0, tk.END)
+        for idx, task in enumerate(self.task_manager.tasks):
+            status = "✔" if task.is_complete else "❌"
+            self.task_listbox.insert(tk.END, f"{idx}. {task.description} [{status}]")
+
+    def get_selected_task_index(self):
+        try:
+            selected_task = self.task_listbox.curselection()
+            return selected_task[0] if selected_task else None
+        except IndexError:
+            return None
+
+if __name__ == "__main__":
+    # Setup the Tkinter root window and TaskManager
+    task_manager = TaskManager()
+    root = tk.Tk()
+    app = TaskManagerApp(root, task_manager)
+    root.mainloop()
