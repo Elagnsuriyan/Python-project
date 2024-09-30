@@ -1,0 +1,49 @@
+import random
+import string
+
+# Function to generate a secure password based on user input criteria
+def generate_password(length, include_uppercase, include_numbers, include_symbols):
+    characters = string.ascii_lowercase  # Always include lowercase letters
+
+    if include_uppercase:
+        characters += string.ascii_uppercase
+    if include_numbers:
+        characters += string.digits
+    if include_symbols:
+        characters += string.punctuation
+
+    # Ensure that password contains at least one character from each selected category
+    password = []
+    if include_uppercase:
+        password.append(random.choice(string.ascii_uppercase))
+    if include_numbers:
+        password.append(random.choice(string.digits))
+    if include_symbols:
+        password.append(random.choice(string.punctuation))
+
+    # Fill the rest of the password
+    while len(password) < length:
+        password.append(random.choice(characters))
+
+    # Shuffle the password list to ensure randomness
+    random.shuffle(password)
+
+    return ''.join(password)
+
+def main():
+    print("Welcome to the Secure Password Generator!")
+    
+    # Get user input for password criteria
+    length = int(input("Enter desired password length: "))
+    include_uppercase = input("Include uppercase letters? (y/n): ").lower() == 'y'
+    include_numbers = input("Include numbers? (y/n): ").lower() == 'y'
+    include_symbols = input("Include symbols? (y/n): ").lower() == 'y'
+
+    # Generate password
+    password = generate_password(length, include_uppercase, include_numbers, include_symbols)
+
+    # Display generated password
+    print(f"Generated Password: {password}")
+
+if __name__ == "__main__":
+    main()
